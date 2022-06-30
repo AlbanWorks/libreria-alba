@@ -2,26 +2,25 @@
     outline: none;
     border: none;
     margin:0;
-    width: 60px;
     background: none ;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color3Light);
-}
-.Button i {
-    font-size: 40px;
+    color: inherit;
+    text-shadow: inherit;
 }
 .Button:hover i{
-    font-size: 45px;
-    color: var(--color3);
+    font-size: 110%;
 }
 .Button:active i{
-    font-size: 45px;
-    color: var(--color3);
+    animation: shrink 1s  linear;
+    animation-duration: 0.3s;
+}
+.Copied{
+    font-size: 40%;
 }
 
-.Copiado{
-    font-size: 12px;
-    font-weight: 600;
+@keyframes shrink {
+    0%   {font-size: 100%}
+    100% {font-size: 40%}
 }

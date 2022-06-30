@@ -2,6 +2,7 @@ import {db, storage} from './firebaseConfig'
 import { owner, owner_route, cat_route, pic_route } from './routes'
 import { collection, getDocs, doc, getDoc, setDoc, addDoc, deleteDoc, query, where } from "firebase/firestore"
 import {ref, uploadBytesResumable, getDownloadURL, deleteObject, refFromURL } from "@firebase/storage"
+import imageCompression from 'browser-image-compression'
 
 
 //haganme la atencion de borrar los clg si no les sirven
@@ -25,6 +26,7 @@ const getInfo = async () => {
         CategoryIndex: catIndex,
         StoreName: info.store_name,
         Cellphone: info.cellphone,
+        SocialMedia: info.social_media,
         Logo: info.store_logo
     }
 
@@ -33,8 +35,13 @@ const getInfo = async () => {
 
 const defaultLogo = "https://firebasestorage.googleapis.com/v0/b/mamatienda-a7d3c.appspot.com/o/defaultStore.jpg?alt=media&token=bf95af5c-08b9-4f16-b1ba-0e558fa607a6"
 
-const setStoreInfo = async (name, cellphone, logo) => {
-    const info = {store_name: name , cellphone: cellphone, store_logo: logo}
+const setStoreInfo = async (name, cellphone, facebook, instagram, logo) => {
+    const info = {
+        store_name: name, 
+        cellphone: cellphone, 
+        social_media: {facebook, instagram}, 
+        store_logo: logo
+    }
     try {
         await setDoc(doc(db, owner_route(), "store_info" ), info);
         return{saved:"info saved"}
@@ -207,15 +214,17 @@ const defaultProductPhoto = "https://firebasestorage.googleapis.com/v0/b/mamatie
 const handlePicUpload= async (product)=>{
     //early return si no hay picFile o sea no hay cambo de foto.
     if(!product.picFile) return product
-
-    if(picFile.name === undefined){
+    if(product.picFile.name === undefined){
         product.picUrl = defaultProductPhoto  //formato no admitido o error que hace perder la referencia de picFile
     }
     else{
         const uploadPic = await uploadPicture(product.picFile)
         const picUrl = await getImageURL(product.picFile)
         //si paso algo raro le pongo el link a una imágen por defecto, (manejar estos errores luego)
-        if(uploadPic.err || picUrl.err) product.picUrl = defaultProductPhoto
+        if(uploadPic.err || picUrl.err){
+            alert(`${product.picFile.name} tuvo problemas para cargarse, intente cambiar su formato a jpg, si el problema se repite contacte con nosotros`)
+            product.picUrl = defaultProductPhoto
+        } 
         else product.picUrl = picUrl
     }
     delete product.picFile
@@ -224,15 +233,32 @@ const handlePicUpload= async (product)=>{
 
 const uploadPicture = async (file) =>{
     try {
-        const storageRef = ref(storage, pic_route(file.name))
-      //  const metadata = {owner: owner}; //este dato nos ayudará a que las reglas de storage protejan los archivos de cada dueño
-       await uploadBytesResumable(storageRef, file)
+        const compressedImage = await compressImage(file)
+        const storageRef = ref(storage, pic_route(compressedImage.name))
+        await uploadBytesResumable(storageRef, compressedImage)
         return{ok:"all right"}
     } catch (err) {
         return{err}
     }
 }
 
+const compressImage = async (image) => {
+    //using npm browser-image-compression 
+    const options = {
+        maxSizeMB: 0.3,
+        maxWidthOrHeight: 640,
+        fileType:'image/jpeg',
+        useWebWorker: true
+    }
+    try {
+        const compressedImage = await imageCompression(image, options);
+        console.log(compressedImage.name)
+        return compressedImage
+    } 
+    catch (error) {
+      return image
+    }
+}
 
 const getImageURL = async (file)=>{
     const storageRef = ref(storage, pic_route(file.name))
@@ -246,7 +272,6 @@ const getImageURL = async (file)=>{
 }
 
 const deleteImage = async (picUrl)=>{
-    console.log(picUrl)
     if(picUrl === defaultProductPhoto) return{deleted:"no foto"}
     try {
         const storageRef = ref(storage, picUrl)

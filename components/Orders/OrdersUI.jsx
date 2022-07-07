@@ -10,16 +10,16 @@ const GatewayUI = () => {
     
     const {CartProducts,setCartProducts,PublicInfo} = useContext(DataContext)
     const [Direction, setDirection] = useState("") 
-    const [Indications, setIndications] = useState("") 
+    const [Indications, setIndications] = useState("-") 
     const [OrderState, setOrderState] = useState({notSended:"orden aun no enviada"})
     const [Response, setResponse] = useState()  
-    const [DirectionTitle, setDirectionTitle] = useState("Dirección *")
+    const [DirectionTitle, setDirectionTitle] = useState("Tu Nombre *")
     const DirectionRef =useRef()
     const router = useRouter() 
 
-    useEffect(() => {
+    useEffect(() => { 
         setDirection(getLocalStorageValues("Direction"))
-        setIndications(getLocalStorageValues("Indications"))
+        setIndications("-")
     }, [])
 
     useEffect(() => {
@@ -70,14 +70,6 @@ const GatewayUI = () => {
                             onChange={(e)=>{setDirection(e.target.value)}} 
                             className={classes.InputText}
                             defaultValue={Direction}
-                        />
-                        <p className={classes.Indications} >Indicaciónes, ayudanos a encontrarte (opcional)</p>
-                        <input 
-                            type="text" 
-                            placeholder='Tu nombre, la descripción de tu casa, etc.' 
-                            onChange={(e)=>{setIndications(e.target.value)}}
-                            className={classes.InputText}
-                            defaultValue={Indications}
                         />
                     </div>
                     <div className={classes.Botonera} >

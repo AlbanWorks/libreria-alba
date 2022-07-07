@@ -24,7 +24,9 @@ const SpecialButtonBar = ({SocialMedia}) => {
             </Link>
             :null
         }
-        <ShareButton/>
+        <div className={classes.ShareButtonContainer}>
+            <ShareButton/>
+        </div>
     </div>
   )
 }

@@ -19,6 +19,7 @@
     justify-content: center;
     font-size: 40px;
     color: var(--color3Light);
+    text-shadow: -2px 2px 2px rgba(0, 0, 0, 0.2);
 }
 .Button:hover{
     font-size: 45px;
@@ -27,4 +28,13 @@
 .Button:active{
     font-size: 45px;
     color: var(--color3);
+}
+.ShareButtonContainer{
+    width: 60px;
+    font-size: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color3Light);
+    text-shadow: -2px 2px 2px rgba(0, 0, 0, 0.2);
 }

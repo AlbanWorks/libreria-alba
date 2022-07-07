@@ -1,10 +1,12 @@
-var admin = require("firebase-admin");
+let admin = require("firebase-admin");
+let serviceAccount = require("./privatekeys.json");
 
-var serviceAccount = require("./privatekeys.json");
+if(admin.apps.length === 0){
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+}
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
 
 const firestore = admin.firestore()
 

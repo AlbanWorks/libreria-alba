@@ -49,7 +49,7 @@ const GatewayUI = () => {
 
     const alertInputError= ()=>{
         DirectionRef.current.style.color = "rgb(255, 113, 113)"
-        setDirectionTitle("Coloque una dirección válida 🢃")
+        setDirectionTitle("Coloque una nombre 🢃")
         setTimeout(() => {
             if(DirectionRef.current !== null) DirectionRef.current.style.color = "rgb(68, 68, 68)"
             setDirectionTitle("Dirección *")
